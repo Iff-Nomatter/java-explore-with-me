@@ -16,7 +16,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StatServiceImpl implements StatService {
+
     private final StatRepository statRepository;
+
     @Override
     public void saveStat(StatInputDto statInputDto) {
         statRepository.save(StatMapper.dtoToStatHit(statInputDto));
@@ -32,7 +34,7 @@ public class StatServiceImpl implements StatService {
                 statOutputDtoList.add(StatMapper.statHitToDto(statRepository.findAllByUri(uri)));
             } else if (isUnique && startDateTime.equals(endDateTime)) {
                 statOutputDtoList.add(StatMapper.statHitToDto(statRepository.findDistinctByUriAndIpAndApp(uri)));
-            } else if (!isUnique && !startDateTime.equals(endDateTime)){
+            } else if (!isUnique && !startDateTime.equals(endDateTime)) {
                 statOutputDtoList.add(StatMapper.statHitToDto(statRepository.findAllByUriAndTimestampBetween(uri, startDateTime, endDateTime)));
             } else if (isUnique && !startDateTime.equals(endDateTime)) {
                 statOutputDtoList.add(StatMapper.statHitToDto(statRepository.findDistinctByUriAndTimestampBetween(uri, startDateTime, endDateTime)));
