@@ -1,0 +1,29 @@
+package ru.practicum.explorewithme.model;
+
+import lombok.Data;
+import ru.practicum.explorewithme.model.enumerations.RequestState;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Data
+@Entity(name = "Request")
+@Table(name = "requests")
+public class Request {
+    @Id
+    @SequenceGenerator(name = "request_sequence", sequenceName = "requests_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "request_sequence")
+    @Column(name = "id", updatable = false, unique = true)
+    private int id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requester_id")
+    private User requester;
+    @Column(name = "created")
+    private LocalDateTime createdOn;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "status")
+    private RequestState state;
+}
