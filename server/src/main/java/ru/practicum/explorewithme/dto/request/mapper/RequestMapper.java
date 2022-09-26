@@ -19,7 +19,7 @@ public class RequestMapper {
         );
     }
 
-    public static List<ParticipationRequestDto> requestToDtoList (List<Request> requestList) {
+    public static List<ParticipationRequestDto> requestToDtoList(List<Request> requestList) {
         List<ParticipationRequestDto> participationRequestDtos = new ArrayList<>();
         if (requestList == null || requestList.isEmpty()) {
             return participationRequestDtos;

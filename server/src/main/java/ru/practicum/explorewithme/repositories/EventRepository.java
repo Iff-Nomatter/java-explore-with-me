@@ -23,8 +23,8 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
             "AND (false = :searchByIsPaid OR e.is_paid = :isPaid) " +
             "AND (false = :searchByOneDate OR e.event_date > :rangeStart) " +
             "AND (true = :searchByOneDate OR e.event_date between :rangeStart and :rangeEnd) " +
-            "AND (false = :searchByOnlyAvailable OR e.participant_limit = 0 OR e.participant_limit > rcount.COUNT)"
-            , nativeQuery = true)
+            "AND (false = :searchByOnlyAvailable OR e.participant_limit = 0 OR e.participant_limit > rcount.COUNT)",
+            nativeQuery = true)
     List<Event> findEventsByParams(
             @Param("searchByText")boolean searchByText,
             @Param("text")String text,
@@ -44,8 +44,8 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
             "AND (false = :searchByStates OR e.status IN :stateIds) " +
             "AND (false = :searchByCategory OR e.category_id IN :categoryIds) " +
             "AND (true = :searchByOneDate OR e.event_date > :rangeStart) " +
-            "AND (false = :searchByOneDate OR e.event_date between :rangeStart and :rangeEnd)"
-            , nativeQuery = true)
+            "AND (false = :searchByOneDate OR e.event_date between :rangeStart and :rangeEnd)",
+            nativeQuery = true)
     List<Event> findEventsByParamsAdmin(
             @Param("searchByUsers")boolean searchByUsers,
             @Param("userIds") Set<Integer> userIds,

@@ -21,7 +21,7 @@ public class CommentMapper {
                 comment.isEdited()
         );
     }
-    
+
     public static List<CommentDto> commentToDtoList(List<Comment> comments) {
         List<CommentDto> commentDtos = new ArrayList<>();
         if (comments == null || comments.isEmpty()) {
