@@ -1,11 +1,10 @@
-package ru.practicum.explorewithme.controllers;
+package ru.practicum.explorewithme.controllers.publicControllers;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explorewithme.dto.event.EventFullDto;
-import ru.practicum.explorewithme.dto.event.EventShortDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.explorewithme.dto.event.EventFullDto;
+import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.model.enumerations.EventSortValues;
 import ru.practicum.explorewithme.services.EventService;
 
@@ -16,10 +15,9 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/events")
-public class EventController {
+public class PublicEventController {
 
     private final EventService eventService;
 
@@ -49,7 +47,7 @@ public class EventController {
                                          @Positive @RequestParam(defaultValue = "10") int size,
                                          HttpServletRequest request) {
         log.info("Запрошен список событий по запросу {}, категории={}, платные={}, с={}, по={}, " +
-                "доступные={}, отсортированы по={}, from={}, size={}",
+                        "доступные={}, отсортированы по={}, from={}, size={}",
                 text, categories, isPaid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         return eventService.getEvents(request, text, categories, isPaid, rangeStart, rangeEnd, onlyAvailable,
                 sort.name(), from, size);
@@ -66,5 +64,4 @@ public class EventController {
         log.info("Запрошено событие {}", eventId);
         return eventService.getEventById(request, eventId);
     }
-
 }

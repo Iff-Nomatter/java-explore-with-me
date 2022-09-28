@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.services.impl;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.clients.StatisticsClient;
 import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.ConditionsNotMetException;
 import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.EntryNotFoundException;
@@ -13,8 +14,8 @@ import ru.practicum.explorewithme.model.enumerations.EventState;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.repositories.CategoryRepository;
 import ru.practicum.explorewithme.repositories.EventRepository;
+import ru.practicum.explorewithme.repositories.UserRepository;
 import ru.practicum.explorewithme.services.EventService;
-import ru.practicum.explorewithme.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -24,10 +25,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final StatisticsClient statisticsClient;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -75,12 +77,8 @@ public class EventServiceImpl implements EventService {
         );
         List<EventShortDto> eventShortDtos = new ArrayList<>();
         mapEventsToShortDto(events, eventShortDtos);
-        switch (sort) {
-            case ("VIEWS"):
-                eventShortDtos.sort(Comparator.comparing(EventShortDto::getViews));
-                break;
-            case ("EVENT_DATE"):
-                eventShortDtos.sort(Comparator.comparing(EventShortDto::getEventDate));
+        if (sort.equals("VIEWS")) {
+            eventShortDtos.sort(Comparator.comparing(EventShortDto::getViews));
         }
         return eventShortDtos;
     }
@@ -128,7 +126,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto addEvent(NewEventDto newEventDto, int userId) {
+        if (LocalDateTime.parse(newEventDto.getEventDate(), formatter).equals(LocalDateTime.now().plusHours(2))) {
+            throw new ConditionsNotMetException("Дата события не может быть раньше, чем через два часа");
+        }
         User user = getUserOrThrow(userId); //проверка того, что такой пользователь существует
         Category category = getCategoryOrThrow(newEventDto.getCategory()); //проверка наличия категории
         Event event = EventMapper.dtoToEvent(newEventDto);
@@ -141,6 +143,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEvent(EventUpdateDto eventUpdateDto, int userId) {
         getUserOrThrow(userId); //проверка наличия пользователя
         Event eventToUpdate = getEventOrThrow(eventUpdateDto.getEventId());
@@ -181,7 +184,6 @@ public class EventServiceImpl implements EventService {
         if (updatedEvent.getTitle() != null) {
             eventToUpdate.setTitle(eventToUpdate.getTitle());
         }
-        eventRepository.save(eventToUpdate);
         return EventMapper.eventToFullDto(eventToUpdate, eventToUpdate.getRequests(), getStatForEvent(eventToUpdate.getId()));
     }
 
@@ -205,6 +207,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto cancelEvent(int userId, int eventId) {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
@@ -213,11 +216,11 @@ public class EventServiceImpl implements EventService {
             throw new ConditionsNotMetException("Отменить можно только событие в состоянии ожидания модерации");
         }
         event.setState(EventState.CANCELED);
-        eventRepository.save(event);
         return EventMapper.eventToFullDto(event, event.getRequests(), getStatForEvent(eventId));
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEventAdmin(int eventId, AdminUpdateEventRequestDto adminUpdateEventRequestDto) {
         Event eventToUpdate = getEventOrThrow(eventId);
         Category updatedCategory = new Category();
@@ -252,16 +255,17 @@ public class EventServiceImpl implements EventService {
         if (updatedEvent.getTitle() != null) {
             eventToUpdate.setTitle(updatedEvent.getTitle());
         }
-        eventRepository.save(eventToUpdate);
         return EventMapper.eventToFullDto(eventToUpdate, eventToUpdate.getRequests(), getStatForEvent(eventToUpdate.getId()));
     }
 
     @Override
+    @Transactional
     public EventFullDto publishEvent(int eventId) {
         return changeState(eventId, EventState.PUBLISHED);
     }
 
     @Override
+    @Transactional
     public EventFullDto rejectEvent(int eventId) {
         return changeState(eventId, EventState.CANCELED);
     }
@@ -269,7 +273,6 @@ public class EventServiceImpl implements EventService {
     private EventFullDto changeState(int eventId, EventState state) {
         Event event = getEventOrThrow(eventId);
         event.setState(state);
-        eventRepository.save(event);
         return EventMapper.eventToFullDto(event, event.getRequests(), getStatForEvent(eventId));
     }
 
@@ -292,7 +295,8 @@ public class EventServiceImpl implements EventService {
      * Проверка наличия пользователя в базе
      */
     private User getUserOrThrow(int userId) {
-        return userService.getUserOrThrow(userId);
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntryNotFoundException("Отсутствует пользователь с id: " + userId));
     }
 
     /**

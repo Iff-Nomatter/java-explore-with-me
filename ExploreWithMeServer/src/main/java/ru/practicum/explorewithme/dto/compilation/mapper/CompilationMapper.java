@@ -8,18 +8,16 @@ import ru.practicum.explorewithme.model.Compilation;
 import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.StatEntry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class CompilationMapper {
-    public static CompilationDto compilationToDto(Compilation compilation, HashMap<Integer, StatEntry> statEntryHashMap) {
+    public static CompilationDto compilationToDto(Compilation compilation, Map<Integer, StatEntry> statEntryHashMap) {
         CompilationDto compilationDto = new CompilationDto();
         compilationDto.setId(compilation.getId());
         compilationDto.setPinned(compilation.isPinned());
         compilationDto.setTitle(compilation.getTitle());
         List<EventShortDto> eventShortDtoList = new ArrayList<>();
-        List<Event> eventList = compilation.getEvents();
+        Set<Event> eventList = compilation.getEvents();
         for (Event event : eventList) {
             eventShortDtoList.add(EventMapper.eventToShortDto(event, statEntryHashMap.get(event.getId())));
         }

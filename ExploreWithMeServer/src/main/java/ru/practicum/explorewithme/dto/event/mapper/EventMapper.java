@@ -1,5 +1,7 @@
 package ru.practicum.explorewithme.dto.event.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.dto.category.mapper.CategoryMapper;
 import ru.practicum.explorewithme.dto.event.*;
 import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -64,6 +67,7 @@ public class EventMapper {
         event.setRequestModeration(newEventDto.isRequestModeration());
         event.setTitle(newEventDto.getTitle());
         event.setLocation(LocationMapper.dtoToLocation(newEventDto.getLocation()));
+        event.setCreatedOn(LocalDateTime.now());
         return event;
     }
 

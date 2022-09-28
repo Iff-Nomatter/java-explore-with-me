@@ -8,7 +8,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class EventFullDto {
+//TODO сделать наследование от короткого
+public class EventFullDto  {
     private String annotation;
     private CategoryDto category;
     private long confirmedRequests;

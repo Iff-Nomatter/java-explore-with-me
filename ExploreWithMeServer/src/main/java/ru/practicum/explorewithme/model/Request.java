@@ -11,19 +11,18 @@ import java.time.LocalDateTime;
 @Table(name = "requests")
 public class Request {
     @Id
-    @SequenceGenerator(name = "request_sequence", sequenceName = "requests_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "request_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     private int id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requester_id")
+    @JoinColumn(name = "requester_id", nullable = false)
     private User requester;
     @Column(name = "created")
     private LocalDateTime createdOn;
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private RequestState state;
 }

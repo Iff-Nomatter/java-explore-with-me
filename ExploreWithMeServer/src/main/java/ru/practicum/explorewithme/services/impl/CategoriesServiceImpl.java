@@ -1,41 +1,41 @@
 package ru.practicum.explorewithme.services.impl;
 
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.ConditionsNotMetException;
 import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.EntryNotFoundException;
-import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.ValidationException;
 import ru.practicum.explorewithme.dto.category.CategoryDto;
 import ru.practicum.explorewithme.dto.category.NewCategoryDto;
 import ru.practicum.explorewithme.dto.category.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.explorewithme.model.Category;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.repositories.CategoryRepository;
+import ru.practicum.explorewithme.repositories.EventRepository;
 import ru.practicum.explorewithme.services.CategoriesService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CategoriesServiceImpl implements CategoriesService {
 
     private final CategoryRepository categoryRepository;
 
-    @Override
-    public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-        try {
-            Category category = categoryRepository.save(CategoryMapper.newDtoToCategory(newCategoryDto));
-            return CategoryMapper.categoryToDto(category);
-        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
-            throw new ValidationException("Такая категория уже существует");
-        }
+    private final EventRepository eventRepository;
 
+    @Override
+    @Transactional
+    public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
+        Category category = categoryRepository.save(CategoryMapper.newDtoToCategory(newCategoryDto));
+        return CategoryMapper.categoryToDto(category);
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(CategoryDto categoryDto) {
         getCategoryOrThrow(categoryDto.getId());
         categoryRepository.save(CategoryMapper.dtoToCategory(categoryDto));
@@ -43,12 +43,13 @@ public class CategoriesServiceImpl implements CategoriesService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(int categoryId) {
-        try {
-            categoryRepository.deleteById(categoryId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new EntryNotFoundException("Отсутствует категория с id: " + categoryId);
+        List<Event> events = eventRepository.findEventsByCategory(getCategoryOrThrow(categoryId));
+        if (!events.isEmpty()) {
+            throw new ConditionsNotMetException("Нельзя удалять категорию, к которой приписаны события");
         }
+        categoryRepository.deleteById(categoryId);
     }
 
     @Override
