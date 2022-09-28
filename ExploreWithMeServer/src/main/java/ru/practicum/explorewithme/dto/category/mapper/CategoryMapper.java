@@ -1,12 +1,16 @@
 package ru.practicum.explorewithme.dto.category.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.dto.category.CategoryDto;
 import ru.practicum.explorewithme.dto.category.NewCategoryDto;
 import ru.practicum.explorewithme.model.Category;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryMapper {
     public static CategoryDto categoryToDto(Category category) {
         return new CategoryDto(
@@ -29,13 +33,9 @@ public class CategoryMapper {
     }
 
     public static List<CategoryDto> categoryToDtoList(List<Category> categoryList) {
-        List<CategoryDto> categoryDtos = new ArrayList<>();
         if (categoryList == null || categoryList.isEmpty()) {
-            return categoryDtos;
+            return Collections.emptyList();
         }
-        for (Category category : categoryList) {
-            categoryDtos.add(CategoryMapper.categoryToDto(category));
-        }
-        return categoryDtos;
+        return categoryList.stream().map((CategoryMapper::categoryToDto)).collect(Collectors.toList());
     }
 }

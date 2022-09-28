@@ -3,16 +3,15 @@ package ru.practicum.explorewithme.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity(name = "Compilation")
 @Table(name = "compilations")
 public class Compilation {
     @Id
-    @SequenceGenerator(name = "compilation_sequence", sequenceName = "compilations_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "compilation_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     private int id;
     @Column(name = "title")
@@ -21,5 +20,5 @@ public class Compilation {
     private boolean isPinned;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "compilations_events", joinColumns = {@JoinColumn(name = "compilation_id")}, inverseJoinColumns = {@JoinColumn(name = "event_id")})
-    private List<Event> events = new ArrayList<>();
+    private Set<Event> events = new HashSet<>();
 }

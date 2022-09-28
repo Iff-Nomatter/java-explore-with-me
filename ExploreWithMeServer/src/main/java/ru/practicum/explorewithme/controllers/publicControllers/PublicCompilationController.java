@@ -1,8 +1,7 @@
-package ru.practicum.explorewithme.controllers;
+package ru.practicum.explorewithme.controllers.publicControllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.dto.compilation.CompilationDto;
 import ru.practicum.explorewithme.services.CompilationService;
@@ -11,10 +10,9 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/compilations")
-public class CompilationController {
+public class PublicCompilationController {
 
     private final CompilationService compilationService;
 

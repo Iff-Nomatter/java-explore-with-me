@@ -1,17 +1,24 @@
 package ru.practicum.explorewithme.dto.request.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.dto.request.ParticipationRequestDto;
 import ru.practicum.explorewithme.model.Request;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestMapper {
 
-    public static ParticipationRequestDto requestDToDto(Request request) {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static ParticipationRequestDto requestToDto(Request request) {
         return new ParticipationRequestDto(
-                request.getCreatedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),//TODO вынести форматтер
+                LocalDateTime.now().format(formatter),
                 request.getEvent().getId(),
                 request.getId(),
                 request.getRequester().getId(),
@@ -20,13 +27,9 @@ public class RequestMapper {
     }
 
     public static List<ParticipationRequestDto> requestToDtoList(List<Request> requestList) {
-        List<ParticipationRequestDto> participationRequestDtos = new ArrayList<>();
         if (requestList == null || requestList.isEmpty()) {
-            return participationRequestDtos;
+            return Collections.emptyList();
         }
-        for (Request request : requestList) {
-            participationRequestDtos.add(RequestMapper.requestDToDto(request));
-        }
-        return participationRequestDtos;
+        return requestList.stream().map((RequestMapper::requestToDto)).collect(Collectors.toList());
     }
 }

@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 import java.time.LocalDateTime;
 
-import static javax.persistence.GenerationType.SEQUENCE;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
 @RequiredArgsConstructor
@@ -15,12 +15,12 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Table(name = "statistics")
 public class StatHit {
     @Id
-    @SequenceGenerator(name = "statistics_sequence", sequenceName = "statistics_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE, generator = "statistics_sequence")
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     private int id;
-    @Column(name = "app")
-    private String app;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "app_id")
+    private App app;
     @Column(name = "uri")
     private String uri;
     @Column(name = "ip")

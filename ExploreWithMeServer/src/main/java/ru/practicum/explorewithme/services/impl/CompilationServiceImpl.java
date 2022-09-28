@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.services.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.clients.StatisticsClient;
 import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.EntryNotFoundException;
 import ru.practicum.explorewithme.dto.compilation.CompilationDto;
@@ -18,13 +19,12 @@ import ru.practicum.explorewithme.services.CompilationService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
@@ -34,52 +34,53 @@ public class CompilationServiceImpl implements CompilationService {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
+    @Transactional
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.dtoToCompilation(newCompilationDto);
-        compilation.setEvents(eventRepository.findAllById(newCompilationDto.getEvents()));
+        Set<Event> eventSet = new HashSet<>(eventRepository.findAllById(newCompilationDto.getEvents()));
+        compilation.setEvents(eventSet);
         compilationRepository.save(compilation);
-        HashMap<Integer, StatEntry> statEntryHashMap = groupStatEntryListById(getStatsForEventList(compilation.getEvents()));
+        Map<Integer, StatEntry> statEntryHashMap = groupStatEntryListById(getStatsForEventList(compilation.getEvents()));
         return CompilationMapper.compilationToDto(compilation, statEntryHashMap);
     }
 
     @Override
+    @Transactional
     public void deleteCompilation(int compilationId) {
         getCompilationOrThrow(compilationId);
         compilationRepository.deleteById(compilationId);
     }
 
     @Override
+    @Transactional
     public void deleteEventFromCompilation(int compilationId, int eventId) {
         Compilation compilation = getCompilationOrThrow(compilationId);
         Event event = getEventOrThrow(eventId);
-        List<Event> eventList = compilation.getEvents();
+        Set<Event> eventList = compilation.getEvents();
         eventList.remove(event);
-        compilation.setEvents(eventList);
-        compilationRepository.save(compilation);
     }
 
     @Override
+    @Transactional
     public void addEventToCompilation(int compilationId, int eventId) {
         Compilation compilation = getCompilationOrThrow(compilationId);
         Event event = getEventOrThrow(eventId);
-        List<Event> eventList = compilation.getEvents();
+        Set<Event> eventList = compilation.getEvents();
         eventList.add(event);
-        compilation.setEvents(eventList);
-        compilationRepository.save(compilation);
     }
 
     @Override
+    @Transactional
     public void unpinCompilation(int compilationId) {
         Compilation compilation = getCompilationOrThrow(compilationId);
         compilation.setPinned(false);
-        compilationRepository.save(compilation);
     }
 
     @Override
+    @Transactional
     public void pinCompilation(int compilationId) {
         Compilation compilation = getCompilationOrThrow(compilationId);
         compilation.setPinned(true);
-        compilationRepository.save(compilation);
     }
 
     @Override
@@ -96,7 +97,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto getCompilationById(int compilationId) {
         Compilation compilation = getCompilationOrThrow(compilationId);
-        HashMap<Integer, StatEntry> statEntryHashMap = groupStatEntryListById(getStatsForEventList(compilation.getEvents()));
+        Map<Integer, StatEntry> statEntryHashMap = groupStatEntryListById(getStatsForEventList(compilation.getEvents()));
         return CompilationMapper.compilationToDto(getCompilationOrThrow(compilationId), statEntryHashMap);
     }
 
@@ -110,8 +111,8 @@ public class CompilationServiceImpl implements CompilationService {
                 new EntryNotFoundException("Не найдено событие с id: " + eventId));
     }
 
-    private HashMap<Integer, StatEntry> groupStatEntryListById(List<StatEntry> statEntryList) {
-        HashMap<Integer, StatEntry> statEntryHashMap = new HashMap<>();
+    private Map<Integer, StatEntry> groupStatEntryListById(List<StatEntry> statEntryList) {
+        Map<Integer, StatEntry> statEntryHashMap = new HashMap<>();
         if (statEntryList.isEmpty() || statEntryList.get(0).getApp() == null) {
             return statEntryHashMap;
         } else {
@@ -124,7 +125,7 @@ public class CompilationServiceImpl implements CompilationService {
         return statEntryHashMap;
     }
 
-    private List<StatEntry> getStatsForEventList(List<Event> eventList) {
+    private List<StatEntry> getStatsForEventList(Set<Event> eventList) {
         List<StatEntry> statEntryList = new ArrayList<>();
         for (Event event : eventList) {
             statEntryList.add(statisticsClient.getEventStat(event.getId(),

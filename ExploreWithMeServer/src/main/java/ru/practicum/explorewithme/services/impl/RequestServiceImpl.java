@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.services.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.ConditionsNotMetException;
 import ru.practicum.explorewithme.controllers.exceptionHandling.exceptions.EntryNotFoundException;
 import ru.practicum.explorewithme.dto.request.ParticipationRequestDto;
@@ -21,12 +22,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public ParticipationRequestDto addRequest(int userId, int eventId) {
         Event event = getEventOrThrow(eventId);
         User requester = getUserOrThrow(userId);
@@ -52,7 +55,7 @@ public class RequestServiceImpl implements RequestService {
             newRequest.setState(RequestState.CONFIRMED);
         }
         requestRepository.save(newRequest);
-        return RequestMapper.requestDToDto(newRequest);
+        return RequestMapper.requestToDto(newRequest);
     }
 
     @Override
@@ -62,6 +65,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto removeRequest(int userId, int requestId) {
         Request request = getRequestOrThrow(requestId);
         User user = getUserOrThrow(userId);
@@ -70,7 +74,7 @@ public class RequestServiceImpl implements RequestService {
         }
         requestRepository.delete(request);
         request.setState(RequestState.CANCELED);
-        return RequestMapper.requestDToDto(request);
+        return RequestMapper.requestToDto(request);
     }
 
     @Override
@@ -84,6 +88,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto confirmRequest(int userId, int eventId, int requestId) {
         User user = getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
@@ -108,10 +113,11 @@ public class RequestServiceImpl implements RequestService {
         }
         requestRepository.save(request);
         eventRepository.save(event);
-        return RequestMapper.requestDToDto(request);
+        return RequestMapper.requestToDto(request);
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto rejectRequest(int userId, int eventId, int requestId) {
         User user = getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
@@ -120,7 +126,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ConditionsNotMetException("Это не ваше событие");
         }
         request.setState(RequestState.REJECTED);
-        return RequestMapper.requestDToDto(request);
+        return RequestMapper.requestToDto(request);
     }
 
     private Request getRequestOrThrow(int requestId) {

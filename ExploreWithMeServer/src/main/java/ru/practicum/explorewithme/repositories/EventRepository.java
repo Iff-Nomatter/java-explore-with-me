@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.repositories;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.explorewithme.model.Category;
 import ru.practicum.explorewithme.model.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +24,8 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
             "AND (false = :searchByIsPaid OR e.is_paid = :isPaid) " +
             "AND (false = :searchByOneDate OR e.event_date > :rangeStart) " +
             "AND (true = :searchByOneDate OR e.event_date between :rangeStart and :rangeEnd) " +
-            "AND (false = :searchByOnlyAvailable OR e.participant_limit = 0 OR e.participant_limit > rcount.COUNT)",
+            "AND (false = :searchByOnlyAvailable OR e.participant_limit = 0 OR e.participant_limit > rcount.COUNT)" +
+            "ORDER BY event_date DESC",
             nativeQuery = true)
     List<Event> findEventsByParams(
             @Param("searchByText")boolean searchByText,
@@ -60,4 +62,6 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     );
 
     List<Event> findEventsByInitiator(User initiator, Pageable pageable);
+
+    List<Event> findEventsByCategory(Category category);
 }

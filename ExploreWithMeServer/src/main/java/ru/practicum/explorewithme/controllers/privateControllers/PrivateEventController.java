@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.controllers;
+package ru.practicum.explorewithme.controllers.privateControllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import ru.practicum.explorewithme.services.CommentService;
 import ru.practicum.explorewithme.services.EventService;
 import ru.practicum.explorewithme.services.RequestService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/users")
-public class UserController {
+public class PrivateEventController {
     private final EventService eventService;
     private final RequestService requestService;
     private final CommentService commentService;
@@ -36,14 +37,14 @@ public class UserController {
 
     @PatchMapping("/{userId}/events")
     public EventFullDto updateEvent(@PathVariable int userId,
-                                     @RequestBody EventUpdateDto eventUpdateDto) {
+                                    @Valid @RequestBody EventUpdateDto eventUpdateDto) {
         log.info("Пользователь id={} обновил событие={}", userId, eventUpdateDto);
         return eventService.updateEvent(eventUpdateDto, userId);
     }
 
     @PostMapping("/{userId}/events")
     public EventFullDto postEvent(@PathVariable int userId,
-                                  @RequestBody NewEventDto newEventDto) {
+                                  @Valid @RequestBody NewEventDto newEventDto) {
         log.info("Пользователь id={} создал событие={}", userId, newEventDto);
         return eventService.addEvent(newEventDto, userId);
     }
@@ -97,25 +98,5 @@ public class UserController {
                                                   @PathVariable int reqId) {
         log.info("Пользователь id={}, отклонил запрос на участие id={}, в событии id={}", userId, reqId, eventId);
         return requestService.rejectRequest(userId, eventId, reqId);
-    }
-
-    @GetMapping("/{userId}/requests")
-    public List<ParticipationRequestDto> getRequestListByUserId(@PathVariable int userId) {
-        log.info("Пользователь id={} запросил список своих запросов на участие в событиях", userId);
-        return requestService.getRequestsByUserId(userId);
-    }
-
-    @PostMapping("/{userId}/requests")
-    public ParticipationRequestDto postRequest(@PathVariable int userId,
-                                               @RequestParam int eventId) {
-        log.info("Пользователь id={} добавил запрос на участие в событии={}", userId, eventId);
-        return requestService.addRequest(userId, eventId);
-    }
-
-    @PatchMapping("/{userId}/requests/{requestId}/cancel")
-    public ParticipationRequestDto cancelRequest(@PathVariable int userId,
-                                                 @PathVariable int requestId) {
-        log.info("Пользователь id={} отменил свой запрос на участие id={}", userId, requestId);
-        return requestService.removeRequest(userId, requestId);
     }
 }

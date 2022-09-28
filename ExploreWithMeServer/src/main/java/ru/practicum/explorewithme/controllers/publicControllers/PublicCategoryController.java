@@ -1,8 +1,7 @@
-package ru.practicum.explorewithme.controllers;
+package ru.practicum.explorewithme.controllers.publicControllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.dto.category.CategoryDto;
 import ru.practicum.explorewithme.services.CategoriesService;
@@ -11,10 +10,9 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/categories")
-public class CategoryController {
+public class PublicCategoryController {
 
     private final CategoriesService categoriesService;
 
