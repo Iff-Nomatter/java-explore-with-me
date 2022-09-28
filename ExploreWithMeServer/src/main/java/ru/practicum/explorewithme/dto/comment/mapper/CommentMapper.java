@@ -7,9 +7,10 @@ import ru.practicum.explorewithme.model.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommentMapper {
 
@@ -26,15 +27,11 @@ public class CommentMapper {
     }
 
     public static List<CommentDto> commentToDtoList(List<Comment> comments) {
-        List<CommentDto> commentDtos = new ArrayList<>();
         if (comments == null || comments.isEmpty()) {
-            return commentDtos;
+            return Collections.emptyList();
         }
         comments.sort((Comparator.comparing(Comment::getCreatedOn)));
-        for (Comment comment : comments) {
-            commentDtos.add(CommentMapper.commentToDto(comment));
-        }
-        return commentDtos;
+        return comments.stream().map((CommentMapper::commentToDto)).collect(Collectors.toList());
     }
 
     public static Comment dtoToComment(CommentDto commentDto, User user, Event event) {

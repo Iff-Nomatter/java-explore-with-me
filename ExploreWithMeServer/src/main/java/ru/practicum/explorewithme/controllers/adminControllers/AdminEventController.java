@@ -6,6 +6,7 @@ import ru.practicum.explorewithme.dto.event.EventFullDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explorewithme.services.CommentService;
 import ru.practicum.explorewithme.services.EventService;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class AdminEventController {
 
     private final EventService eventService;
+    private final CommentService commentService;
 
     @GetMapping("/events")
     public List<EventFullDto> getEventsAdmin(@RequestParam int[] users,
@@ -49,5 +51,12 @@ public class AdminEventController {
     public EventFullDto rejectEvent(@PathVariable int eventId) {
         log.info("Администратор отклонил событие id={}", eventId);
         return eventService.rejectEvent(eventId);
+    }
+
+    @DeleteMapping("/events/{eventId}/comments/{commentId}")
+    public void deleteComment(@PathVariable int eventId,
+                              @PathVariable int commentId) {
+        log.info("Администратор удалил комментарий id={} к событию id={}", commentId, eventId);
+        commentService.deleteComment(commentId, eventId);
     }
 }
