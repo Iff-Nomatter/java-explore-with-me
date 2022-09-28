@@ -38,22 +38,22 @@ public class EventMapper {
 
     public static EventFullDto eventToFullDto(Event event, @Nullable List<Request> requestList, @Nullable StatEntry statEntry) {
         return new EventFullDto(
+                event.getId(),
                 event.getAnnotation(),
                 CategoryMapper.categoryToDto(event.getCategory()),
                 requestList != null ? requestList.stream().filter(request1 -> request1.getState() == RequestState.CONFIRMED).count() : 0,
+                event.getEventDate().format(formatter),
+                UserMapper.userToShortDto(event.getInitiator()),
+                event.getIsPaid(),
+                event.getTitle(),
+                statEntry != null ? statEntry.getHits() : 0,
                 event.getCreatedOn().format(formatter),
                 event.getDescription(),
-                event.getEventDate().format(formatter),
-                event.getId(),
-                UserMapper.userToShortDto(event.getInitiator()),
                 LocationMapper.locationToDto(event.getLocation()),
-                event.getIsPaid(),
                 event.getParticipantLimit(),
                 event.getPublishedOn() != null ? event.getPublishedOn().format(formatter) : null,
                 event.getRequestModeration(),
-                event.getState().toString(),
-                event.getTitle(),
-                statEntry != null ? statEntry.getHits() : 0
+                event.getState().toString()
         );
     }
 

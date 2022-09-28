@@ -1,29 +1,47 @@
 package ru.practicum.explorewithme.dto.event;
 
+import lombok.*;
 import ru.practicum.explorewithme.dto.category.CategoryDto;
 import ru.practicum.explorewithme.dto.location.LocationDto;
 import ru.practicum.explorewithme.dto.user.UserShortDto;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @Data
-@AllArgsConstructor
-//TODO сделать наследование от короткого
-public class EventFullDto  {
-    private String annotation;
-    private CategoryDto category;
-    private long confirmedRequests;
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+public class EventFullDto extends EventShortDto {
     private String createdOn;
     private String description;
-    private String eventDate;
-    private int id;
-    private UserShortDto initiator;
     private LocationDto location;
-    private boolean paid;
     private int participantLimit;
     private String publishedOn;
     private boolean requestModeration;
     private String state;
-    private String title;
-    private int views;
+
+    public EventFullDto(
+            int id,
+            String annotation,
+            CategoryDto category,
+            long confirmedRequests,
+            String eventDate,
+            UserShortDto initiator,
+            boolean paid,
+            String title,
+            int views,
+            String createdOn,
+            String description,
+            LocationDto location,
+            int participantLimit,
+            String publishedOn,
+            boolean requestModeration,
+            String state
+    ) {
+        super(id, annotation, category, confirmedRequests, eventDate, initiator, paid, title, views);
+        this.createdOn = createdOn;
+        this.description = description;
+        this.location = location;
+        this.participantLimit = participantLimit;
+        this.publishedOn = publishedOn;
+        this.requestModeration = requestModeration;
+        this.state = state;
+    }
 }
