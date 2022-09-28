@@ -2,11 +2,13 @@ package ru.practicum.explorewithme.controllers;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explorewithme.dto.comment.CommentDto;
 import ru.practicum.explorewithme.dto.event.EventFullDto;
 import ru.practicum.explorewithme.dto.event.EventShortDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.explorewithme.model.enumerations.EventSortValues;
+import ru.practicum.explorewithme.services.CommentService;
 import ru.practicum.explorewithme.services.EventService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
+    private final CommentService commentService;
 
     /**
      * Принимает параметры для фильтрации выходного списка событий
@@ -67,4 +70,9 @@ public class EventController {
         return eventService.getEventById(request, eventId);
     }
 
+    @GetMapping("/{eventId}/comments")
+    public List<CommentDto> getCommentsForEvent(@PathVariable int eventId) {
+        log.info("Запрошены комментарии события id={}", eventId);
+        return commentService.getCommentsForEvent(eventId);
+    }
 }

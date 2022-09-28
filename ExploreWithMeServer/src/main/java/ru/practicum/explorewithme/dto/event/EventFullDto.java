@@ -1,10 +1,13 @@
 package ru.practicum.explorewithme.dto.event;
 
 import ru.practicum.explorewithme.dto.category.CategoryDto;
+import ru.practicum.explorewithme.dto.comment.CommentDto;
 import ru.practicum.explorewithme.dto.location.LocationDto;
 import ru.practicum.explorewithme.dto.user.UserShortDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -25,4 +28,5 @@ public class EventFullDto {
     private String state;
     private String title;
     private int views;
+    private List<CommentDto> comments;
 }

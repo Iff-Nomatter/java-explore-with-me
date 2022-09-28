@@ -18,8 +18,6 @@ public class Comment {
     private String content;
     @Column(name = "created")
     private LocalDateTime createdOn;
-    @Column(name = "is_edited")
-    private boolean isEdited;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "event_id")
     private Event event;

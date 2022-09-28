@@ -6,10 +6,14 @@ import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.User;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class CommentMapper {
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static CommentDto commentToDto(Comment comment) {
         return new CommentDto(
@@ -17,8 +21,7 @@ public class CommentMapper {
                 comment.getContent(),
                 comment.getAuthor().getName(),
                 comment.getEvent().getTitle(),
-                comment.getCreatedOn(),
-                comment.isEdited()
+                comment.getCreatedOn().format(formatter)
         );
     }
 
@@ -27,6 +30,7 @@ public class CommentMapper {
         if (comments == null || comments.isEmpty()) {
             return commentDtos;
         }
+        comments.sort((Comparator.comparing(Comment::getCreatedOn)));
         for (Comment comment : comments) {
             commentDtos.add(CommentMapper.commentToDto(comment));
         }
@@ -39,8 +43,7 @@ public class CommentMapper {
         comment.setContent(commentDto.getContent());
         comment.setAuthor(user);
         comment.setEvent(event);
-        comment.setCreatedOn(commentDto.getCreated() == null ? LocalDateTime.now() : commentDto.getCreated());
-        comment.setEdited(commentDto.isEdited());
+        comment.setCreatedOn(LocalDateTime.parse(commentDto.getCreated(), formatter));
         return comment;
     }
 }

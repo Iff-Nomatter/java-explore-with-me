@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explorewithme.services.CategoriesService;
-import ru.practicum.explorewithme.services.CompilationService;
-import ru.practicum.explorewithme.services.EventService;
-import ru.practicum.explorewithme.services.UserService;
+import ru.practicum.explorewithme.services.*;
 
 import java.util.List;
 
@@ -29,6 +26,7 @@ public class AdminController {
     private final EventService eventService;
     private final CategoriesService categoriesService;
     private final CompilationService compilationService;
+    private final CommentService commentService;
 
     @GetMapping("/events")
     public List<EventFullDto> getEventsAdmin(@RequestParam int[] users,
@@ -49,6 +47,13 @@ public class AdminController {
         log.info("Администратор обновил событие id={}, adminUpdateEventRequestDto={}",
                 eventId, adminUpdateEventRequestDto);
         return eventService.updateEventAdmin(eventId, adminUpdateEventRequestDto);
+    }
+
+    @DeleteMapping("/events/{eventId}/comments/{commentId}")
+    public void deleteComment(@PathVariable int eventId,
+                              @PathVariable int commentId) {
+        log.info("Администратор удалил комментарий id={} к событию id={}", commentId, eventId);
+        commentService.deleteComment(commentId, eventId);
     }
 
     @PatchMapping("/events/{eventId}/publish")

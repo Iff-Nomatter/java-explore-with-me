@@ -298,7 +298,8 @@ public class EventServiceImpl implements EventService {
     /**
      * Проверка наличия события в базе
      */
-    private Event getEventOrThrow(int eventId) {
+    @Override
+    public Event getEventOrThrow(int eventId) {
         return eventRepository.findById(eventId).orElseThrow(() ->
                 new EntryNotFoundException("Отсутствует событие с id: " + eventId));
     }

@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.services;
 
 import ru.practicum.explorewithme.dto.event.*;
+import ru.practicum.explorewithme.model.Event;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -43,5 +44,7 @@ public interface EventService {
     EventFullDto publishEvent(int eventId);
 
     EventFullDto rejectEvent(int eventId);
+
+    Event getEventOrThrow(int eventId);
 
 }
