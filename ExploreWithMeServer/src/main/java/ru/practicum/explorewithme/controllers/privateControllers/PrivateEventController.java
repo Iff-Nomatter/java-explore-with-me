@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explorewithme.dto.comment.CommentDto;
 import ru.practicum.explorewithme.dto.event.EventFullDto;
 import ru.practicum.explorewithme.dto.event.EventShortDto;
 import ru.practicum.explorewithme.dto.event.EventUpdateDto;
 import ru.practicum.explorewithme.dto.event.NewEventDto;
 import ru.practicum.explorewithme.dto.request.ParticipationRequestDto;
+import ru.practicum.explorewithme.services.CommentService;
 import ru.practicum.explorewithme.services.EventService;
 import ru.practicum.explorewithme.services.RequestService;
 
@@ -23,6 +25,7 @@ import java.util.List;
 public class PrivateEventController {
     private final EventService eventService;
     private final RequestService requestService;
+    private final CommentService commentService;
 
     @GetMapping("/{userId}/events")
     public List<EventShortDto> getEventsOfUserById(@PathVariable int userId,
@@ -46,6 +49,12 @@ public class PrivateEventController {
         return eventService.addEvent(newEventDto, userId);
     }
 
+    @GetMapping("/{userId}/comments")
+    public List<CommentDto> getCommentForUser(@PathVariable int userId) {
+        log.info("Запрошены комментарии пользователя id={}", userId);
+        return commentService.getCommentsForUser(userId);
+    }
+
     @GetMapping("/{userId}/events/{eventId}")
     public EventFullDto getFullEventById(@PathVariable int userId,
                                          @PathVariable int eventId) {
@@ -58,6 +67,14 @@ public class PrivateEventController {
                                     @PathVariable int eventId) {
         log.info("Пользователь id={} отменил событие id={}", userId, eventId);
         return eventService.cancelEvent(userId, eventId);
+    }
+
+    @PostMapping("/{userId}/events/{eventId}/comments")
+    public CommentDto postComment(@PathVariable int userId,
+                                  @PathVariable int eventId,
+                                  @RequestBody CommentDto commentDto) {
+        log.info("Пользователь id={} запостил комментарий={} к событию id={}", userId, commentDto, eventId);
+        return commentService.postComment(commentDto, userId, eventId);
     }
 
     @GetMapping("/{userId}/events/{eventId}/requests")
