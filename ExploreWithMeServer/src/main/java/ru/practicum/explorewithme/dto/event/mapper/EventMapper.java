@@ -3,7 +3,6 @@ package ru.practicum.explorewithme.dto.event.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.dto.category.mapper.CategoryMapper;
-import ru.practicum.explorewithme.dto.comment.mapper.CommentMapper;
 import ru.practicum.explorewithme.dto.event.*;
 import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.user.mapper.UserMapper;
@@ -39,23 +38,22 @@ public class EventMapper {
 
     public static EventFullDto eventToFullDto(Event event, @Nullable List<Request> requestList, @Nullable StatEntry statEntry) {
         return new EventFullDto(
+                event.getId(),
                 event.getAnnotation(),
                 CategoryMapper.categoryToDto(event.getCategory()),
                 requestList != null ? requestList.stream().filter(request1 -> request1.getState() == RequestState.CONFIRMED).count() : 0,
+                event.getEventDate().format(formatter),
+                UserMapper.userToShortDto(event.getInitiator()),
+                event.getIsPaid(),
+                event.getTitle(),
+                statEntry != null ? statEntry.getHits() : 0,
                 event.getCreatedOn().format(formatter),
                 event.getDescription(),
-                event.getEventDate().format(formatter),
-                event.getId(),
-                UserMapper.userToShortDto(event.getInitiator()),
                 LocationMapper.locationToDto(event.getLocation()),
-                event.getIsPaid(),
                 event.getParticipantLimit(),
                 event.getPublishedOn() != null ? event.getPublishedOn().format(formatter) : null,
                 event.getRequestModeration(),
-                event.getState().toString(),
-                event.getTitle(),
-                statEntry != null ? statEntry.getHits() : 0,
-                event.getComments() != null ? CommentMapper.commentToDtoList(event.getComments()) : null
+                event.getState().toString()
         );
     }
 
