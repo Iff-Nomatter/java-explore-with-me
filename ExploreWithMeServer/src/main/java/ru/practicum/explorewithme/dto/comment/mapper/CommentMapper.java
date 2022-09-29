@@ -40,7 +40,7 @@ public class CommentMapper {
         comment.setContent(commentDto.getContent());
         comment.setAuthor(user);
         comment.setEvent(event);
-        comment.setCreatedOn(LocalDateTime.parse(commentDto.getCreated(), FORMATTER));
+        comment.setCreatedOn(LocalDateTime.now());
         return comment;
     }
 }
