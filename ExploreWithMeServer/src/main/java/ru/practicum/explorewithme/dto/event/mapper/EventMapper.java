@@ -11,7 +11,7 @@ import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.Request;
 import ru.practicum.explorewithme.model.StatEntry;
 import org.springframework.lang.Nullable;
-import ru.practicum.explorewithme.model.enumerations.RequestState;
+import ru.practicum.explorewithme.model.enumeration.RequestState;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
