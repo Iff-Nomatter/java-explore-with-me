@@ -19,12 +19,12 @@ public class StatHit {
     @Column(name = "id", updatable = false, unique = true)
     private int id;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "app_id")
+    @JoinColumn(name = "app_id", nullable = false)
     private App app;
-    @Column(name = "uri")
+    @Column(name = "uri", nullable = false)
     private String uri;
-    @Column(name = "ip")
+    @Column(name = "ip", nullable = false)
     private String ip;
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 }

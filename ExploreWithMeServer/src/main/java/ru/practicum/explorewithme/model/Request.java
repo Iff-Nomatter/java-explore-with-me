@@ -1,7 +1,7 @@
 package ru.practicum.explorewithme.model;
 
 import lombok.Data;
-import ru.practicum.explorewithme.model.enumerations.RequestState;
+import ru.practicum.explorewithme.model.enumeration.RequestState;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

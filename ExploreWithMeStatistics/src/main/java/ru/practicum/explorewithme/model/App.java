@@ -16,6 +16,6 @@ public class App {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     private int id;
-    @Column(name = "app")
+    @Column(name = "app", nullable = false)
     private String appName;
 }

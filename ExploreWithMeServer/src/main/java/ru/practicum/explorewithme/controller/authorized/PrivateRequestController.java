@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.controllers.privateControllers;
+package ru.practicum.explorewithme.controller.authorized;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

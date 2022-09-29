@@ -1,8 +1,7 @@
-package ru.practicum.explorewithme.controllers.adminControllers;
+package ru.practicum.explorewithme.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.dto.category.CategoryDto;
 import ru.practicum.explorewithme.dto.category.NewCategoryDto;
@@ -12,7 +11,6 @@ import javax.validation.Valid;
 
 @RestController
 @Slf4j
-@Validated
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin")
 public class AdminCategoryController {

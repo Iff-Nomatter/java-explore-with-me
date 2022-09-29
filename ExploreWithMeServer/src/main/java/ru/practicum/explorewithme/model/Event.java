@@ -1,7 +1,7 @@
 package ru.practicum.explorewithme.model;
 
 import lombok.Data;
-import ru.practicum.explorewithme.model.enumerations.EventState;
+import ru.practicum.explorewithme.model.enumeration.EventState;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
