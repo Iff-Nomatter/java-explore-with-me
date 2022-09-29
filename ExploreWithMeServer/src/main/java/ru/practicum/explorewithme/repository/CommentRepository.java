@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.repositories;
+package ru.practicum.explorewithme.repository;
 
 import ru.practicum.explorewithme.model.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,5 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findAllByAuthor_Id(int userId);
 
-    List<Comment> findAllByEvent_Id(int eventId);
-
-    void deleteCommentByEvent_IdAndId(int eventId, int commentId);
+    void deleteCommentById(int commentId);
 }

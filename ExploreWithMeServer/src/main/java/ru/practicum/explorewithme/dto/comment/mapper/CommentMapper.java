@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class CommentMapper {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static CommentDto commentToDto(Comment comment) {
         return new CommentDto(
@@ -22,7 +22,7 @@ public class CommentMapper {
                 comment.getContent(),
                 comment.getAuthor().getName(),
                 comment.getEvent().getTitle(),
-                comment.getCreatedOn().format(formatter)
+                comment.getCreatedOn().format(FORMATTER)
         );
     }
 
@@ -40,7 +40,7 @@ public class CommentMapper {
         comment.setContent(commentDto.getContent());
         comment.setAuthor(user);
         comment.setEvent(event);
-        comment.setCreatedOn(LocalDateTime.parse(commentDto.getCreated(), formatter));
+        comment.setCreatedOn(LocalDateTime.parse(commentDto.getCreated(), FORMATTER));
         return comment;
     }
 }

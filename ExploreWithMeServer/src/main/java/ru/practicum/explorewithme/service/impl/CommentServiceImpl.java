@@ -3,17 +3,16 @@ package ru.practicum.explorewithme.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.explorewithme.controller.exceptionHandling.exception.ConditionsNotMetException;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.EntryNotFoundException;
 import ru.practicum.explorewithme.dto.comment.CommentDto;
 import ru.practicum.explorewithme.dto.comment.mapper.CommentMapper;
 import ru.practicum.explorewithme.model.Comment;
 import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.User;
-import ru.practicum.explorewithme.repositories.CommentRepository;
+import ru.practicum.explorewithme.repository.CommentRepository;
 import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.repository.UserRepository;
-import ru.practicum.explorewithme.services.CommentService;
+import ru.practicum.explorewithme.service.CommentService;
 
 import java.util.List;
 
@@ -38,20 +37,21 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getCommentsForUser(int userId) {
-        getUserOrThrow(userId);
         List<Comment> comments = commentRepository.findAllByAuthor_Id(userId);
         return CommentMapper.commentToDtoList(comments);
     }
 
     @Override
     @Transactional
-    public void deleteComment(int commentId, int eventId) {
-        Event event = getEventOrThrow(eventId);
-        Comment comment = getCommentOrThrow(commentId);
-        if (!event.getComments().contains(comment)) {
-            throw new ConditionsNotMetException("Этот комментарий не принадлежит к этому событию");
-        }
-        commentRepository.deleteCommentByEvent_IdAndId(eventId, commentId);
+    public void deleteComment(int commentId) {
+        commentRepository.deleteCommentById(commentId);
+    }
+
+    @Override
+    public CommentDto editComment(int commentId, CommentDto commentDto) {
+        Comment commentToUpdate = getCommentOrThrow(commentId);
+        commentToUpdate.setContent(commentDto.getContent());
+        return CommentMapper.commentToDto(commentToUpdate);
     }
 
     /**
@@ -70,7 +70,7 @@ public class CommentServiceImpl implements CommentService {
                 new EntryNotFoundException("Отсутствует событие с id: " + eventId));
     }
 
-    private Comment getCommentOrThrow(int commentId) {
+    public Comment getCommentOrThrow(int commentId) {
         return commentRepository.findById(commentId).orElseThrow(() ->
                 new EntryNotFoundException("Отсутствует комментарий с id: " + commentId));
     }

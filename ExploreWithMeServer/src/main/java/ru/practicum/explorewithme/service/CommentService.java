@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.services;
+package ru.practicum.explorewithme.service;
 
 import ru.practicum.explorewithme.dto.comment.CommentDto;
 
@@ -10,5 +10,7 @@ public interface CommentService {
 
     List<CommentDto> getCommentsForUser(int userId);
 
-    void deleteComment(int commentId, int eventId);
+    void deleteComment(int commentId);
+
+    CommentDto editComment(int commentId, CommentDto commentDto);
 }

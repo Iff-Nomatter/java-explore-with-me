@@ -10,18 +10,17 @@ import java.time.LocalDateTime;
 @Table(name = "comments")
 public class Comment {
     @Id
-    @SequenceGenerator(name = "comment_sequence", sequenceName = "comments_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     private int id;
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
-    @Column(name = "created")
+    @Column(name = "created", nullable = false)
     private LocalDateTime createdOn;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 }

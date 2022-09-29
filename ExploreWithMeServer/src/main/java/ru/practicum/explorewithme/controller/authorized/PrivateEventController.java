@@ -11,7 +11,7 @@ import ru.practicum.explorewithme.dto.event.NewEventDto;
 import ru.practicum.explorewithme.dto.request.ParticipationRequestDto;
 import ru.practicum.explorewithme.service.EventService;
 import ru.practicum.explorewithme.service.RequestService;
-import ru.practicum.explorewithme.services.CommentService;
+import ru.practicum.explorewithme.service.CommentService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -47,8 +47,16 @@ public class PrivateEventController {
         return eventService.addEvent(newEventDto, userId);
     }
 
+    @PostMapping("/{userId}/events/{eventId}/comments")
+    public CommentDto postComment(@PathVariable int userId,
+                                  @PathVariable int eventId,
+                                  @RequestBody CommentDto commentDto) {
+        log.info("Пользователь id={} запостил комментарий={} к событию id={}", userId, commentDto, eventId);
+        return commentService.postComment(commentDto, userId, eventId);
+    }
+
     @GetMapping("/{userId}/comments")
-    public List<CommentDto> getCommentForUser(@PathVariable int userId) {
+    public List<CommentDto> getCommentsForUser(@PathVariable int userId) {
         log.info("Запрошены комментарии пользователя id={}", userId);
         return commentService.getCommentsForUser(userId);
     }
@@ -65,14 +73,6 @@ public class PrivateEventController {
                                     @PathVariable int eventId) {
         log.info("Пользователь id={} отменил событие id={}", userId, eventId);
         return eventService.cancelEvent(userId, eventId);
-    }
-
-    @PostMapping("/{userId}/events/{eventId}/comments")
-    public CommentDto postComment(@PathVariable int userId,
-                                  @PathVariable int eventId,
-                                  @RequestBody CommentDto commentDto) {
-        log.info("Пользователь id={} запостил комментарий={} к событию id={}", userId, commentDto, eventId);
-        return commentService.postComment(commentDto, userId, eventId);
     }
 
     @GetMapping("/{userId}/events/{eventId}/requests")
