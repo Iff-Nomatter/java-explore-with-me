@@ -1,12 +1,12 @@
-package ru.practicum.explorewithme.controllers.publicControllers;
+package ru.practicum.explorewithme.controller.unauthorized;
 
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.explorewithme.dto.event.EventFullDto;
 import ru.practicum.explorewithme.dto.event.EventShortDto;
-import ru.practicum.explorewithme.model.enumerations.EventSortValues;
-import ru.practicum.explorewithme.services.EventService;
+import ru.practicum.explorewithme.model.enumeration.EventSortValues;
+import ru.practicum.explorewithme.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;

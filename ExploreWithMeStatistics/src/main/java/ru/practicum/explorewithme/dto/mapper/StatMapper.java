@@ -1,7 +1,10 @@
 package ru.practicum.explorewithme.dto.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.dto.StatInputDto;
 import ru.practicum.explorewithme.dto.StatOutputDto;
+import ru.practicum.explorewithme.model.App;
 import ru.practicum.explorewithme.model.StatHit;
 
 import java.time.LocalDateTime;
