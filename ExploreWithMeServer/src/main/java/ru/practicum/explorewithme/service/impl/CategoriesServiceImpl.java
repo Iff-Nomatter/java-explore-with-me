@@ -1,6 +1,8 @@
 package ru.practicum.explorewithme.service.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.ConditionsNotMetException;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.EntryNotFoundException;
@@ -23,11 +25,16 @@ import java.util.List;
 public class CategoriesServiceImpl implements CategoriesService {
 
     //применен AutoWired для удаления цикличной зависимости
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+
+    private final EventService eventService;
 
     @Autowired
-    private EventService eventService;
+    public CategoriesServiceImpl(CategoryRepository categoryRepository,
+                                 @Lazy EventService eventService) {
+        this.categoryRepository = categoryRepository;
+        this.eventService = eventService;
+    }
 
     @Override
     @Transactional

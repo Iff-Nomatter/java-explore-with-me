@@ -22,7 +22,7 @@ public class EventFullDto extends EventShortDto {
     private List<CommentDto> comments;
 
     public EventFullDto(
-            int id,
+            Integer id,
             String annotation,
             CategoryDto category,
             long confirmedRequests,
