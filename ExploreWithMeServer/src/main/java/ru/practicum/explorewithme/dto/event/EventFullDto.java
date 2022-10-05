@@ -18,7 +18,7 @@ public class EventFullDto extends EventShortDto {
     private String state;
 
     public EventFullDto(
-            int id,
+            Integer id,
             String annotation,
             CategoryDto category,
             long confirmedRequests,

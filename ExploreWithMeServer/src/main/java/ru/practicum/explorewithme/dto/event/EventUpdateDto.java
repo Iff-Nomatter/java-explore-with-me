@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class EventUpdateDto {
     @JsonProperty(required = true)
-    private int eventId;
+    private Integer eventId;
     @Size(min = 20, max = 2000)
     private String annotation;
     private Integer category;

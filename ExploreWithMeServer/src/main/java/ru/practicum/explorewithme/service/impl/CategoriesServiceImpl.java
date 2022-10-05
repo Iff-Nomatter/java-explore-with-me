@@ -1,12 +1,12 @@
 package ru.practicum.explorewithme.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.ConditionsNotMetException;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.EntryNotFoundException;
 import ru.practicum.explorewithme.dto.category.CategoryDto;
 import ru.practicum.explorewithme.dto.category.NewCategoryDto;
 import ru.practicum.explorewithme.dto.category.mapper.CategoryMapper;
-import lombok.RequiredArgsConstructor;
 import ru.practicum.explorewithme.model.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,13 +19,15 @@ import ru.practicum.explorewithme.service.EventService;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CategoriesServiceImpl implements CategoriesService {
 
-    private final CategoryRepository categoryRepository;
+    //применен AutoWired для удаления цикличной зависимости
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    private final EventService eventService;
+    @Autowired
+    private EventService eventService;
 
     @Override
     @Transactional

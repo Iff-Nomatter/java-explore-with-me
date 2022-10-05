@@ -9,7 +9,7 @@ import javax.validation.constraints.Email;
 @Data
 @AllArgsConstructor
 public class UserDto {
-    private int id;
+    private Integer id;
     @JsonProperty(required = true)
     private String name;
     @Email

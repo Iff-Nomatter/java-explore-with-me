@@ -117,7 +117,7 @@ public class CompilationServiceImpl implements CompilationService {
         } else {
             for (StatEntry statEntry : statEntryList) {
                 String entryUri = statEntry.getUri();
-                entryUri = entryUri.substring(entryUri.lastIndexOf("/"));
+                entryUri = entryUri.substring(entryUri.lastIndexOf("/") + 1);
                 statEntryHashMap.put(Integer.parseInt(entryUri), statEntry);
             }
         }

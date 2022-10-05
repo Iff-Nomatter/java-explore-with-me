@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.service.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.EntryNotFoundException;
 import ru.practicum.explorewithme.dto.user.UserDto;
 import ru.practicum.explorewithme.dto.user.mapper.UserMapper;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -26,12 +28,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto addUser(UserDto userDto) {
         User user = userRepository.save(UserMapper.dtoToUser(userDto));
         return UserMapper.userToDto(user);
     }
 
     @Override
+    @Transactional
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
