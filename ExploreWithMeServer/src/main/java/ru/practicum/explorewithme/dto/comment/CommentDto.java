@@ -10,12 +10,11 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 public class CommentDto {
-    private int id;
+    private Integer id;
     @JsonProperty(required = true)
     @Size(max = 255)
     @NotBlank
     private String content;
     private String authorName;
-    private String eventName;
     private String created;
 }

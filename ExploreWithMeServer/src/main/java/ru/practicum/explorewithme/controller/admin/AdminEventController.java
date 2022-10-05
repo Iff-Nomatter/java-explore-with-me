@@ -59,7 +59,7 @@ public class AdminEventController {
     public CommentDto updateComment(@PathVariable int commentId,
                                     @RequestBody CommentDto commentDto) {
         log.info("Администратор отредактировал комментарий id={}, comment={}", commentId, commentDto);
-        return commentService.editComment(commentId, commentDto);
+        return commentService.editComment(commentDto);
     }
 
     @DeleteMapping("/events/{eventId}/comments/{commentId}")

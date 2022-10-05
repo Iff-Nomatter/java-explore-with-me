@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.EntryNotFoundException;
@@ -14,6 +15,8 @@ import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.repository.UserRepository;
 import ru.practicum.explorewithme.service.CommentService;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -24,20 +27,22 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     @Transactional
-    public CommentDto postComment(CommentDto commentDto, int userId, int eventId) {
+    public CommentDto createComment(CommentDto commentDto, int userId, int eventId) {
         User user = getUserOrThrow(userId);
-        Event event = getEventOrThrow(eventId);
-        Comment comment = CommentMapper.dtoToComment(commentDto, user, event);
+        getEventOrThrow(eventId); //проверка наличия такого события
+        commentDto.setCreated(LocalDateTime.now().format(formatter));
+        Comment comment = CommentMapper.dtoToComment(commentDto, user);
         commentRepository.save(comment);
         return CommentMapper.commentToDto(comment);
     }
 
     @Override
-    public List<CommentDto> getCommentsForUser(int userId) {
-        List<Comment> comments = commentRepository.findAllByAuthor_Id(userId);
+    public List<CommentDto> getAllByUserId(int userId, int from, int size) {
+        List<Comment> comments = commentRepository.findAllByAuthor_Id(userId, PageRequest.of(from / size, size));
         return CommentMapper.commentToDtoList(comments);
     }
 
@@ -48,8 +53,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDto editComment(int commentId, CommentDto commentDto) {
-        Comment commentToUpdate = getCommentOrThrow(commentId);
+    @Transactional
+    public CommentDto editComment(CommentDto commentDto) {
+        Comment commentToUpdate = getCommentOrThrow(commentDto.getId());
         commentToUpdate.setContent(commentDto.getContent());
         return CommentMapper.commentToDto(commentToUpdate);
     }

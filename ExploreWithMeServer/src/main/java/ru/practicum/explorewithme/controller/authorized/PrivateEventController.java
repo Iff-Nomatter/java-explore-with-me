@@ -48,17 +48,19 @@ public class PrivateEventController {
     }
 
     @PostMapping("/{userId}/events/{eventId}/comments")
-    public CommentDto postComment(@PathVariable int userId,
-                                  @PathVariable int eventId,
-                                  @RequestBody CommentDto commentDto) {
+    public CommentDto createComment(@PathVariable int userId,
+                                    @PathVariable int eventId,
+                                    @RequestBody CommentDto commentDto) {
         log.info("Пользователь id={} запостил комментарий={} к событию id={}", userId, commentDto, eventId);
-        return commentService.postComment(commentDto, userId, eventId);
+        return commentService.createComment(commentDto, userId, eventId);
     }
 
     @GetMapping("/{userId}/comments")
-    public List<CommentDto> getCommentsForUser(@PathVariable int userId) {
-        log.info("Запрошены комментарии пользователя id={}", userId);
-        return commentService.getCommentsForUser(userId);
+    public List<CommentDto> getCommentsForUser(@PathVariable int userId,
+                                               @RequestParam(defaultValue = "0") int from,
+                                               @RequestParam(defaultValue = "10") int size) {
+        log.info("Запрошены комментарии пользователя id={} from={} size={}", userId, from, size);
+        return commentService.getAllByUserId(userId, from, size);
     }
 
     @GetMapping("/{userId}/events/{eventId}")
