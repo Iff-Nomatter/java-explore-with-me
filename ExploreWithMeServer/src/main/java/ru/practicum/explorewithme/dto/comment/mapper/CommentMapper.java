@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.dto.comment.mapper;
 
 import ru.practicum.explorewithme.dto.comment.CommentDto;
 import ru.practicum.explorewithme.model.Comment;
+import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.User;
 
 import java.time.LocalDateTime;
@@ -32,11 +33,11 @@ public class CommentMapper {
         return comments.stream().map(CommentMapper::commentToDto).collect(Collectors.toList());
     }
 
-    public static Comment dtoToComment(CommentDto commentDto, User user) {
+    public static Comment dtoToComment(CommentDto commentDto, User user, Event event) {
         Comment comment = new Comment();
-        comment.setId(commentDto.getId());
         comment.setContent(commentDto.getContent());
         comment.setAuthor(user);
+        comment.setEvent(event);
         comment.setCreatedOn(LocalDateTime.parse(commentDto.getCreated(), FORMATTER));
         return comment;
     }

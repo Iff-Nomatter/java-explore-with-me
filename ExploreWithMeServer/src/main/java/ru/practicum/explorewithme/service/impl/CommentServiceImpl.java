@@ -33,9 +33,9 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public CommentDto createComment(CommentDto commentDto, int userId, int eventId) {
         User user = getUserOrThrow(userId);
-        getEventOrThrow(eventId); //проверка наличия такого события
+        Event event = getEventOrThrow(eventId);
         commentDto.setCreated(LocalDateTime.now().format(formatter));
-        Comment comment = CommentMapper.dtoToComment(commentDto, user);
+        Comment comment = CommentMapper.dtoToComment(commentDto, user, event);
         commentRepository.save(comment);
         return CommentMapper.commentToDto(comment);
     }
