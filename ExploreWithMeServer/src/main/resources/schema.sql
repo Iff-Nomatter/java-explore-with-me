@@ -73,10 +73,8 @@ CREATE TABLE IF NOT EXISTS comments
     content VARCHAR NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     author_id INTEGER NOT NULL,
-    event_id INTEGER NOT NULL,
     CONSTRAINT pk_comment PRIMARY KEY (id),
-    CONSTRAINT fk_comment_author FOREIGN KEY (author_id) REFERENCES users (id),
-    CONSTRAINT fk_comment_event FOREIGN KEY  (event_id) REFERENCES events (id)
+    CONSTRAINT fk_comment_author FOREIGN KEY (author_id) REFERENCES users (id)
 );
 
 CREATE TABLE IF NOT EXISTS compilations_events
