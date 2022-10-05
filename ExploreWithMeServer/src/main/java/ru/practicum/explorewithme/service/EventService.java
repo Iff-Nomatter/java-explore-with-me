@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.service;
 
 import ru.practicum.explorewithme.dto.event.*;
+import ru.practicum.explorewithme.model.Category;
 import ru.practicum.explorewithme.model.Event;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,9 @@ public interface EventService {
 
     EventFullDto rejectEvent(int eventId);
 
-    Event getEventOrThrow(int eventId);
+    Event getEventOrThrow(int eventId); //служебный метод для проверки наличия события в базе
 
+    List<Event> getEventsByCategory(Category category); //служебный метод для получения всех событий категории
+
+    List<Event> getAllById(List<Integer> eventIdList); //служебный метод для получения списка событий
 }

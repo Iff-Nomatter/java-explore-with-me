@@ -12,10 +12,10 @@ import ru.practicum.explorewithme.model.User;
 import ru.practicum.explorewithme.model.enumeration.EventState;
 import ru.practicum.explorewithme.model.enumeration.RequestState;
 import org.springframework.stereotype.Service;
-import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.repository.RequestRepository;
-import ru.practicum.explorewithme.repository.UserRepository;
+import ru.practicum.explorewithme.service.EventService;
 import ru.practicum.explorewithme.service.RequestService;
+import ru.practicum.explorewithme.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,8 +25,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+    private final EventService eventService;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -111,8 +111,6 @@ public class RequestServiceImpl implements RequestService {
                     request1.setState(RequestState.REJECTED);
             }
         }
-        requestRepository.save(request);
-        eventRepository.save(event);
         return RequestMapper.requestToDto(request);
     }
 
@@ -135,12 +133,10 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private User getUserOrThrow(int userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-                new EntryNotFoundException("Отсутствует пользователь с id: " + userId));
+        return userService.getUserOrThrow(userId);
     }
 
     private Event getEventOrThrow(int eventId) {
-        return eventRepository.findById(eventId).orElseThrow(() ->
-                new EntryNotFoundException("Отсутствует событие с id: " + eventId));
+        return eventService.getEventOrThrow(eventId);
     }
 }

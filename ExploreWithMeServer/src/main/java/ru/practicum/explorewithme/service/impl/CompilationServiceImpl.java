@@ -14,8 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.repository.CompilationRepository;
-import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.service.CompilationService;
+import ru.practicum.explorewithme.service.EventService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,7 +28,7 @@ import java.util.*;
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
-    private final EventRepository eventRepository;
+    private final EventService eventService;
     private final StatisticsClient statisticsClient;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -37,7 +37,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.dtoToCompilation(newCompilationDto);
-        Set<Event> eventSet = new HashSet<>(eventRepository.findAllById(newCompilationDto.getEvents()));
+        Set<Event> eventSet = new HashSet<>(eventService.getAllById(newCompilationDto.getEvents()));
         compilation.setEvents(eventSet);
         compilationRepository.save(compilation);
         Map<Integer, StatEntry> statEntryHashMap = groupStatEntryListById(getStatsForEventList(compilation.getEvents()));
@@ -107,8 +107,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private Event getEventOrThrow(int eventId) {
-        return eventRepository.findById(eventId).orElseThrow(() ->
-                new EntryNotFoundException("Не найдено событие с id: " + eventId));
+        return eventService.getEventOrThrow(eventId);
     }
 
     private Map<Integer, StatEntry> groupStatEntryListById(List<StatEntry> statEntryList) {

@@ -13,8 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.repository.CategoryRepository;
-import ru.practicum.explorewithme.repository.EventRepository;
 import ru.practicum.explorewithme.service.CategoriesService;
+import ru.practicum.explorewithme.service.EventService;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class CategoriesServiceImpl implements CategoriesService {
 
     private final CategoryRepository categoryRepository;
 
-    private final EventRepository eventRepository;
+    private final EventService eventService;
 
     @Override
     @Transactional
@@ -45,7 +45,7 @@ public class CategoriesServiceImpl implements CategoriesService {
     @Override
     @Transactional
     public void deleteCategory(int categoryId) {
-        List<Event> events = eventRepository.findEventsByCategory(getCategoryOrThrow(categoryId));
+        List<Event> events = eventService.getEventsByCategory(getCategoryOrThrow(categoryId));
         if (!events.isEmpty()) {
             throw new ConditionsNotMetException("Нельзя удалять категорию, к которой приписаны события");
         }
@@ -64,7 +64,8 @@ public class CategoriesServiceImpl implements CategoriesService {
         return CategoryMapper.categoryToDto(category);
     }
 
-    private Category getCategoryOrThrow(int categoryId) {
+    @Override
+    public Category getCategoryOrThrow(int categoryId) {
         return categoryRepository.findById(categoryId).orElseThrow(() ->
                 new EntryNotFoundException("Отсутствует категория с id: " + categoryId));
     }

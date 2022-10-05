@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.service.impl;
 
+import ru.practicum.explorewithme.controller.exceptionHandling.exception.EntryNotFoundException;
 import ru.practicum.explorewithme.dto.user.UserDto;
 import ru.practicum.explorewithme.dto.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(int id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public User getUserOrThrow(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntryNotFoundException("Отсутствует пользователь с id: " + userId));
     }
 }

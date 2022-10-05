@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 import ru.practicum.explorewithme.model.*;
 import ru.practicum.explorewithme.model.enumeration.EventState;
 import org.springframework.stereotype.Service;
-import ru.practicum.explorewithme.repository.CategoryRepository;
 import ru.practicum.explorewithme.repository.EventRepository;
-import ru.practicum.explorewithme.repository.UserRepository;
+import ru.practicum.explorewithme.service.CategoriesService;
 import ru.practicum.explorewithme.service.EventService;
+import ru.practicum.explorewithme.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
+    private final CategoriesService categoriesService;
+    private final UserService userService;
     private final StatisticsClient statisticsClient;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -304,14 +304,6 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * Проверка наличия пользователя в базе
-     */
-    private User getUserOrThrow(int userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntryNotFoundException("Отсутствует пользователь с id: " + userId));
-    }
-
-    /**
      * Проверка наличия события в базе
      */
     @Override
@@ -320,14 +312,29 @@ public class EventServiceImpl implements EventService {
                 new EntryNotFoundException("Отсутствует событие с id: " + eventId));
     }
 
+    @Override
+    public List<Event> getEventsByCategory(Category category) {
+        return eventRepository.findEventsByCategory(category);
+    }
+
+    @Override
+    public List<Event> getAllById(List<Integer> eventIdList) {
+        return eventRepository.findAllById(eventIdList);
+    }
+
     /**
      * Проверка наличия категории события в базе
      */
     private Category getCategoryOrThrow(int categoryId) {
-        return categoryRepository.findById(categoryId).orElseThrow(() ->
-                new EntryNotFoundException("Отсутствует категория с id: " + categoryId));
+        return categoriesService.getCategoryOrThrow(categoryId);
     }
 
+    /**
+     * Проверка наличия пользователя в базе
+     */
+    private User getUserOrThrow(int userId) {
+        return userService.getUserOrThrow(userId);
+    }
 
     private StatEntry getStatForEvent(int eventId) {
         LocalDateTime localDateTime = LocalDateTime.now();
