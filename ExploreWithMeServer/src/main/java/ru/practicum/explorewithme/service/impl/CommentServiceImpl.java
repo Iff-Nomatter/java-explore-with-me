@@ -11,9 +11,9 @@ import ru.practicum.explorewithme.model.Comment;
 import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.User;
 import ru.practicum.explorewithme.repository.CommentRepository;
-import ru.practicum.explorewithme.repository.EventRepository;
-import ru.practicum.explorewithme.repository.UserRepository;
 import ru.practicum.explorewithme.service.CommentService;
+import ru.practicum.explorewithme.service.EventService;
+import ru.practicum.explorewithme.service.UserService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +25,8 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
-    private final EventRepository eventRepository;
+    private final UserService userService;
+    private final EventService eventService;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
@@ -60,24 +60,25 @@ public class CommentServiceImpl implements CommentService {
         return CommentMapper.commentToDto(commentToUpdate);
     }
 
+    @Override
+    public Comment getCommentOrThrow(int commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() ->
+                new EntryNotFoundException("Отсутствует комментарий с id: " + commentId));
+    }
+
     /**
      * Проверка наличия пользователя в базе
      */
     private User getUserOrThrow(int userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntryNotFoundException("Отсутствует пользователь с id: " + userId));
+        return userService.getUserOrThrow(userId);
     }
 
     /**
      * Проверка наличия события в базе
      */
-    public Event getEventOrThrow(int eventId) {
-        return eventRepository.findById(eventId).orElseThrow(() ->
-                new EntryNotFoundException("Отсутствует событие с id: " + eventId));
+    private Event getEventOrThrow(int eventId) {
+        return eventService.getEventOrThrow(eventId);
     }
 
-    public Comment getCommentOrThrow(int commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() ->
-                new EntryNotFoundException("Отсутствует комментарий с id: " + commentId));
-    }
+
 }
