@@ -10,11 +10,11 @@ public class ParticipationRequestDto {
     @JsonProperty(required = true)
     private String created;
     @JsonProperty(required = true)
-    private int event;
+    private Integer event;
     @JsonProperty(required = true)
-    private int id;
+    private Integer id;
     @JsonProperty(required = true)
-    private int requester;
+    private Integer requester;
     @JsonProperty(required = true)
     private String status;
 }

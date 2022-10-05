@@ -11,7 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventShortDto {
-    private int id;
+    private Integer id;
     private String annotation;
     private CategoryDto category;
     private long confirmedRequests;

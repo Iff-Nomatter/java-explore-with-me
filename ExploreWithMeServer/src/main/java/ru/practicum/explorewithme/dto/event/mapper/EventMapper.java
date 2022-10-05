@@ -69,7 +69,6 @@ public class EventMapper {
         event.setRequestModeration(newEventDto.isRequestModeration());
         event.setTitle(newEventDto.getTitle());
         event.setLocation(LocationMapper.dtoToLocation(newEventDto.getLocation()));
-        event.setCreatedOn(LocalDateTime.now());
         return event;
     }
 
