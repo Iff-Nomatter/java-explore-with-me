@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.dto.event.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.dto.category.mapper.CategoryMapper;
+import ru.practicum.explorewithme.dto.comment.mapper.CommentMapper;
 import ru.practicum.explorewithme.dto.event.*;
 import ru.practicum.explorewithme.dto.location.mapper.LocationMapper;
 import ru.practicum.explorewithme.dto.user.mapper.UserMapper;
@@ -20,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static EventShortDto eventToShortDto(Event event, StatEntry statEntry) {
         return new EventShortDto(
@@ -28,7 +29,7 @@ public class EventMapper {
                 event.getAnnotation(),
                 CategoryMapper.categoryToDto(event.getCategory()),
                 event.getRequests().size(),
-                event.getEventDate().format(formatter),
+                event.getEventDate().format(FORMATTER),
                 UserMapper.userToShortDto(event.getInitiator()),
                 event.getIsPaid(),
                 event.getTitle(),
@@ -42,18 +43,19 @@ public class EventMapper {
                 event.getAnnotation(),
                 CategoryMapper.categoryToDto(event.getCategory()),
                 requestList != null ? requestList.stream().filter(request1 -> request1.getState() == RequestState.CONFIRMED).count() : 0,
-                event.getEventDate().format(formatter),
+                event.getEventDate().format(FORMATTER),
                 UserMapper.userToShortDto(event.getInitiator()),
                 event.getIsPaid(),
                 event.getTitle(),
                 statEntry != null ? statEntry.getHits() : 0,
-                event.getCreatedOn().format(formatter),
+                event.getCreatedOn().format(FORMATTER),
                 event.getDescription(),
                 LocationMapper.locationToDto(event.getLocation()),
                 event.getParticipantLimit(),
-                event.getPublishedOn() != null ? event.getPublishedOn().format(formatter) : null,
+                event.getPublishedOn() != null ? event.getPublishedOn().format(FORMATTER) : null,
                 event.getRequestModeration(),
-                event.getState().toString()
+                event.getState().toString(),
+                event.getComments() != null ? CommentMapper.commentToDtoList(event.getComments()) : null
         );
     }
 
@@ -61,7 +63,7 @@ public class EventMapper {
         Event event = new Event();
         event.setAnnotation(newEventDto.getAnnotation());
         event.setDescription(newEventDto.getDescription());
-        event.setEventDate(LocalDateTime.parse(newEventDto.getEventDate(), formatter));
+        event.setEventDate(LocalDateTime.parse(newEventDto.getEventDate(), FORMATTER));
         event.setIsPaid(newEventDto.isPaid());
         event.setParticipantLimit(newEventDto.getParticipantLimit());
         event.setRequestModeration(newEventDto.isRequestModeration());
@@ -75,7 +77,7 @@ public class EventMapper {
         event.setAnnotation(eventUpdateDto.getAnnotation());
         event.setCategory(category);
         event.setDescription(eventUpdateDto.getDescription());
-        event.setEventDate(LocalDateTime.parse(eventUpdateDto.getEventDate(), formatter));
+        event.setEventDate(LocalDateTime.parse(eventUpdateDto.getEventDate(), FORMATTER));
         event.setIsPaid(eventUpdateDto.getPaid());
         event.setId(eventUpdateDto.getEventId());
         event.setParticipantLimit(eventUpdateDto.getParticipantLimit());
@@ -88,7 +90,7 @@ public class EventMapper {
         event.setAnnotation(adminUpdateEventRequestDto.getAnnotation());
         event.setCategory(category);
         event.setDescription(adminUpdateEventRequestDto.getDescription());
-        event.setEventDate(LocalDateTime.parse(adminUpdateEventRequestDto.getEventDate(), formatter));
+        event.setEventDate(LocalDateTime.parse(adminUpdateEventRequestDto.getEventDate(), FORMATTER));
         event.setIsPaid(adminUpdateEventRequestDto.getPaid());
         event.setId(eventId);
         event.setParticipantLimit(adminUpdateEventRequestDto.getParticipantLimit());
