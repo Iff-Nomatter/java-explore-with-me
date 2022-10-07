@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestMapper {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static ParticipationRequestDto requestToDto(Request request) {
         return new ParticipationRequestDto(
-                LocalDateTime.now().format(formatter),
+                LocalDateTime.now().format(FORMATTER),
                 request.getEvent().getId(),
                 request.getId(),
                 request.getRequester().getId(),
