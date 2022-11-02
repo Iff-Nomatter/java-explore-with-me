@@ -46,11 +46,11 @@ API основного сервиса разделено на три части.
 
 ## Используемые технологии
 
-* Spring Boot 2.7.3
+* Spring Boot
 * Maven
 * Lombok
 * Hibernate ORM
-* PostgreSQL 13.7
+* PostgreSQL
 * Docker
 
 ## Спецификация дополнительной возможности
