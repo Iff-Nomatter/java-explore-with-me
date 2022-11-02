@@ -13,7 +13,9 @@ public interface CommentService {
 
     void deleteComment(int commentId);
 
-    CommentDto editComment(CommentDto commentDto);
+    CommentDto editCommentAdmin(CommentDto commentDto);
+
+    CommentDto editCommentUser(CommentDto commentDto);
 
     Comment getCommentOrThrow(int commentId); //служебный метод для проверки наличия комментария в базе
 }

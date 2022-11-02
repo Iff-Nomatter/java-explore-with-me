@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.explorewithme.controller.exceptionHandling.exception.ConditionsNotMetException;
 import ru.practicum.explorewithme.controller.exceptionHandling.exception.EntryNotFoundException;
 import ru.practicum.explorewithme.dto.comment.CommentDto;
 import ru.practicum.explorewithme.dto.comment.mapper.CommentMapper;
 import ru.practicum.explorewithme.model.Comment;
 import ru.practicum.explorewithme.model.Event;
 import ru.practicum.explorewithme.model.User;
+import ru.practicum.explorewithme.model.enumeration.EventState;
 import ru.practicum.explorewithme.repository.CommentRepository;
 import ru.practicum.explorewithme.service.CommentService;
 import ru.practicum.explorewithme.service.EventService;
@@ -34,6 +36,9 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto createComment(CommentDto commentDto, int userId, int eventId) {
         User user = getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
+        if (event.getState().equals(EventState.PENDING)) {
+            throw new ConditionsNotMetException("Нельзя оставить комментарий к еще неопубликованному событию!");
+        }
         commentDto.setCreated(LocalDateTime.now().format(formatter));
         Comment comment = CommentMapper.dtoToComment(commentDto, user, event);
         commentRepository.save(comment);
@@ -54,8 +59,19 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto editComment(CommentDto commentDto) {
+    public CommentDto editCommentAdmin(CommentDto commentDto) {
         Comment commentToUpdate = getCommentOrThrow(commentDto.getId());
+        commentToUpdate.setContent(commentDto.getContent());
+        return CommentMapper.commentToDto(commentToUpdate);
+    }
+
+    @Override
+    @Transactional
+    public CommentDto editCommentUser(CommentDto commentDto) {
+        Comment commentToUpdate = getCommentOrThrow(commentDto.getId());
+        if (commentToUpdate.getCreatedOn().isBefore(LocalDateTime.now().minusWeeks(1L))) {
+            throw new ConditionsNotMetException("Комментарий оставлен слишком давно и вы не можете его отредактировать");
+        }
         commentToUpdate.setContent(commentDto.getContent());
         return CommentMapper.commentToDto(commentToUpdate);
     }
