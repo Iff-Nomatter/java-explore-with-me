@@ -55,6 +55,15 @@ public class PrivateEventController {
         return commentService.createComment(commentDto, userId, eventId);
     }
 
+    @PatchMapping("/{userId}/events/{eventId}/comments/{commentId}")
+    public CommentDto updateComment(@PathVariable int userId,
+                                    @PathVariable int commentId,
+                                    @PathVariable int eventId,
+                                    @RequestBody CommentDto commentDto) {
+        log.info("Пользователь id={} отредактировал комментарий id={} к событию id={}, comment={}", userId, commentId, eventId, commentDto);
+        return commentService.editCommentUser(commentDto);
+    }
+
     @GetMapping("/{userId}/comments")
     public List<CommentDto> getCommentsForUser(@PathVariable int userId,
                                                @RequestParam(defaultValue = "0") int from,
